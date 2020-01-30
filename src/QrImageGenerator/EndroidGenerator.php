@@ -2,6 +2,7 @@
 namespace GoogleAuthenticator\QrImageGenerator;
 
 use chorus\ObjectHelper;
+use chorus\UnknownClassException;
 
 /**
  * Endroid
@@ -39,7 +40,7 @@ class EndroidGenerator implements QrImageGeneratorInterface
 	public function generateUri($data){
 		$qrCodeClass = 'Endroid\QrCode\QrCode';
 		if(!class_exists($qrCodeClass)){
-			throw new \Exception('Install endroid/qr-code (via composer require endroid/qr-code) to use the qr-code first');
+			throw new UnknownClassException('Install endroid/qr-code (via composer require endroid/qr-code) to use the qr-code first');
 		}
 		$qrCode = ObjectHelper::create($qrCodeClass);
 		$qrCode = new $qrCodeClass($data);

@@ -2,6 +2,7 @@
 namespace GoogleAuthenticator;
 
 use Base32\Base32;
+use chorus\InvalidConfigException;
 use chorus\ObjectHelper;
 use GoogleAuthenticator\QrImageGenerator\QrImageGeneratorInterface;
 
@@ -78,16 +79,16 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	protected function checkSecretlength($value, $throwException = true){
 		$result = true;
 		if(!is_integer($value)){
-			$result = new \Exception('Secret length must be an integer');
+			$result = new InvalidConfigException('Secret length must be an integer');
 		}
 		if($value < 16){
-			$result = new \Exception('Secret length can\'t be less than 16');
+			$result = new InvalidConfigException('Secret length can\'t be less than 16');
 		}
 		if($value > 128){
-			$result = new \Exception('Secret length can\'t be more than 128');
+			$result = new InvalidConfigException('Secret length can\'t be more than 128');
 		}
 		if($value % 8 > 0){
-			$result = new \Exception('Secret length must be divisible by 8');
+			$result = new InvalidConfigException('Secret length must be divisible by 8');
 		}
 		if($result !== true && $throwException === true){
 			throw $result;
