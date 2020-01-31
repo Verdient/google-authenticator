@@ -52,17 +52,15 @@ $secret = '${secret}'; //密钥 这里一般是用上面生成的密钥
 ```php
 $data = $authenticator->getUri($title, $name, $secret);
 ```
-$data 为用于生成二维码的数据，可将$data和$secret一起返回给前端，由前端根据$data生成二维码并展示秘钥 $secret 来应对二维码扫描不了的情况
+`$data` 为用于生成二维码的数据，可将`$data`和`$secret`一起返回给前端，由前端根据`$data`生成二维码并展示秘钥 `$secret` 来应对二维码扫描不了的情况
 ### 后端生成二维码
 ```php
 $data = $authenticator->getQrImageUri($title, $name, $secret);
 ```
-$data为生成好的二维码URI，前端直接
-```html
-<img src="${data}">
-```
+`$data`为生成好的二维码URI，前端直接`<img src="${data}">`就可以了
 
-推荐使用前端生成二维码
+
+>推荐使用前端生成二维码
 
 ## 验证
 
@@ -88,8 +86,8 @@ $window = 1;
 
 $authenticator->validate($captcha, $secret, $window);
 ```
-验证器每30秒为一个窗口，如果$window为0, 则在窗口交替的时候会有验证不通过的问题
-比如当前窗口的验证码为1，前一窗口的验证码为2，后一窗口的验证码为3
-则在$window为0时，只有1可以通过验证
-而在$window为1时，1，2，3都可以通过验证
+> 验证器每`30`秒为一个窗口，如果`$window`为`0`, 则在窗口交替的时候会有验证不通过的问题
+比如当前窗口的验证码为`1`，前一窗口的验证码为`2`，后一窗口的验证码为`3`
+则在`$window`为`0`时，只有`1`可以通过验证
+而在`$window`为`1`时，`1`，`2`，`3`都可以通过验证
 以此类推
