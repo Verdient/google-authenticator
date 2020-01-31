@@ -10,7 +10,7 @@ use GoogleAuthenticator\GoogleAuthenticator;
 /**
  * 密钥长度 (可选)
  * 必须为8的倍数的正整数
- * 默认32
+ * 默认为32
  */
 $sercetLength = 32;
 
@@ -43,7 +43,7 @@ $secret = $authenticator->generateSecret($length);
 首先准备基础数据
 
 ```php
-$title = '${标题'}; //标题
+$title = '${标题}'; //标题
 $name = '${名称}'; //名称
 $secret = '${secret}'; //密钥 这里一般是用上面生成的密钥
 ```
