@@ -5,7 +5,7 @@
 ## 创建验证器实例
 
 ```php
-use GoogleAuthenticator\GoogleAuthenticator;
+use Verdient\GoogleAuthenticator\GoogleAuthenticator;
 
 /**
  * 密钥长度 (可选)
@@ -16,12 +16,12 @@ $sercetLength = 32;
 
 /**
  * 二维码生成器 (可选)
- * 默认GoogleAuthenticator\QrImageGenerator\EndroidGenerator
+ * 默认Verdient\GoogleAuthenticator\QrImageGenerator\EndroidGenerator
  * EndroidGenerator需要通过 composer require endroid/qr-code 安装endroid/qr-code
- * 可选值 GoogleAuthenticator\QrImageGenerator\GoQRGenerator,仅支持HTTP
- * 可选值 GoogleAuthenticator\QrImageGenerator\TopscanGenerator,仅支持HTTPS
+ * 可选值 Verdient\GoogleAuthenticator\QrImageGenerator\GoQRGenerator,仅支持HTTP
+ * 可选值 Verdient\GoogleAuthenticator\QrImageGenerator\TopscanGenerator,仅支持HTTPS
  */
-$qrImageGenerator = 'GoogleAuthenticator\QrImageGenerator\EndroidGenerator';
+$qrImageGenerator = 'Verdient\GoogleAuthenticator\QrImageGenerator\EndroidGenerator';
 
 $authenticator = new GoogleAuthenticator([
 	'sercetLength' => $sercetLength,

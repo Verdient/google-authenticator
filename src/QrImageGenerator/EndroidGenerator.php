@@ -1,5 +1,5 @@
 <?php
-namespace GoogleAuthenticator\QrImageGenerator;
+namespace Verdient\GoogleAuthenticator\QrImageGenerator;
 
 use chorus\ObjectHelper;
 use chorus\UnknownClassException;

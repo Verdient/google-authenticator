@@ -1,10 +1,10 @@
 <?php
-namespace GoogleAuthenticator;
+namespace Verdient\GoogleAuthenticator;
 
 use Base32\Base32;
 use chorus\InvalidConfigException;
 use chorus\ObjectHelper;
-use GoogleAuthenticator\QrImageGenerator\QrImageGeneratorInterface;
+use Verdient\GoogleAuthenticator\QrImageGenerator\QrImageGeneratorInterface;
 
 /**
  * GoogleAuthenticator
@@ -36,7 +36,7 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	 * ----------------------------
 	 * @author Verdient。
 	 */
-	public $qrImageGenerator = 'GoogleAuthenticator\QrImageGenerator\EndroidGenerator';
+	public $qrImageGenerator = 'Verdient\GoogleAuthenticator\QrImageGenerator\EndroidGenerator';
 
 	/**
 	 * init()
