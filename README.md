@@ -15,6 +15,40 @@ use Verdient\GoogleAuthenticator\GoogleAuthenticator;
 $sercetLength = 32;
 
 /**
+ * 类型 (可选)
+ * 可选值 totp(基于时间)，hotp（基于计数器）
+ * 默认为totp
+ */
+$type = 'totp';
+
+/**
+ * issuer (可选)
+ * 发行方
+ * 默认为null
+ */
+$issuer = null;
+
+/**
+ * 算法 (可选)
+ * 可选 SHA1，SHA256，SHA512
+ * 默认为SHA1
+ */
+$algorithm = 'SHA1';
+
+/**
+ * 位数 (可选)
+ * 可选6，8
+ * 默认为6
+ */
+$digits = 6;
+
+/**
+ * 周期 (可选，仅在type为totp时有效)
+ * 默认为30
+ */
+$period = 30;
+
+/**
  * 二维码生成器 (可选)
  * 默认Verdient\GoogleAuthenticator\QrImageGenerator\EndroidGenerator
  * EndroidGenerator需要通过 composer require endroid/qr-code 安装endroid/qr-code
@@ -43,19 +77,25 @@ $secret = $authenticator->generateSecret($length);
 首先准备基础数据
 
 ```php
-$title = '${标题}'; //标题
 $name = '${名称}'; //名称
-$secret = '${secret}'; //密钥 这里一般是用上面生成的密钥
+$secret = '${secret}'; //密钥，这里一般是用上面生成的密钥
+$options = [
+	'issuer' => '${issuer}', // 发行方
+	'algorithm' => '${algorithm}', // 算法
+	'digits' => '${digits}', // 位数
+	'counter' => '${counter}', // 计数（仅当type为hotp时有效）
+	'period' => '${period}' // 周期（仅当type为totp时有效）
+]; // 选项，用于覆盖全局配置，一般情况下不用传
 ```
 ### 前端生成二维码
 
 ```php
-$data = $authenticator->getUri($title, $name, $secret);
+$data = $authenticator->getUri($name, $secret, $options);
 ```
 `$data` 为用于生成二维码的数据，可将`$data`和`$secret`一起返回给前端，由前端根据`$data`生成二维码并展示秘钥 `$secret` 来应对二维码扫描不了的情况
 ### 后端生成二维码
 ```php
-$data = $authenticator->getQrImageUri($title, $name, $secret);
+$data = $authenticator->getQrImageUri($name, $secret, $options);
 ```
 `$data`为生成好的二维码URI，前端直接`<img src="${data}">`就可以了
 

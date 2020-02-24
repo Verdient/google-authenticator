@@ -15,20 +15,52 @@ use Verdient\GoogleAuthenticator\QrImageGenerator\QrImageGeneratorInterface;
 class GoogleAuthenticator extends \chorus\BaseObject
 {
 	/**
-	 * @var const CODE_LENGTH
-	 * 代码长度
-	 * ----------------------
-	 * @author Verdient。
-	 */
-	const CODE_LENGTH = 6;
-
-	/**
 	 * @var Integer $sercetLength
 	 * 秘钥长度
 	 * --------------------------
 	 * @author Verdient。
 	 */
 	public $sercetLength = 32;
+
+	/**
+	 * @var String $type
+	 * 类型
+	 * -----------------
+	 * @author Verdient。
+	 */
+	public $type = 'totp';
+
+	/**
+	 * @var String $issuer
+	 * 发行方
+	 * -------------------
+	 * @author Verdient。
+	 */
+	public $issuer = null;
+
+	/**
+	 * @var String $algorithm
+	 * 算法
+	 * ----------------------
+	 * @author Verdient。
+	 */
+	public $algorithm = 'SHA1';
+
+	/**
+	 * @var Integer $digits
+	 * 位数
+	 * --------------------
+	 * @author Verdient。
+	 */
+	public $digits = 6;
+
+	/**
+	 * @var Integer $period
+	 * 周期
+	 * --------------------
+	 * @author Verdient。
+	 */
+	public $period = 30;
 
 	/**
 	 * @var Mixed $qrImageGenerator
@@ -72,7 +104,7 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	 * @param Mixed $value 值
 	 * @param Boolean $throwException 是否抛出异常
 	 * -----------------------------------------
-	 * @throws Exception
+	 * @throws InvalidConfigException
 	 * @return Boolean
 	 * @author Verdient。
 	 */
@@ -116,32 +148,33 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * calculateCaptcha(String $secret[, Integer $timeSlice = null])
+	 * calculateCaptcha(String $secret, Integer $counter[, Integer $digits = null])
 	 * 计算验证码
-	 * -------------------------------------------------------------
+	 * ----------------------------------------------------------------------------
 	 * @param String $secret 秘钥
-	 * @param Integer $timeSlice 时间分片
-	 * ---------------------------------
+	 * @param Integer $counter 计数
+	 * @param Integer $digits 位数
+	 * ----------------------------
 	 * @return String
 	 * @author Verdient。
 	 */
-	public function calculateCaptcha($secret, $timeSlice = null){
-		if($timeSlice === null){
-			$timeSlice = $this->getTimeSlice();
+	public function calculateCaptcha($secret, $counter, $digits = null){
+		if($digits === null){
+			$digits = $this->digits;
 		}
-		$time = chr(0).chr(0).chr(0).chr(0).pack('N*', $timeSlice);
-		$hm = hash_hmac('SHA1', $time, Base32::decode($secret), true);
+		$time = chr(0) . chr(0) . chr(0) . chr(0) . pack('N*', $counter);
+		$hm = hash_hmac($this->algorithm, $time, Base32::decode($secret), true);
 		$offset = ord(substr($hm, -1)) & 0x0F;
 		$hashpart = substr($hm, $offset, 4);
 		$value = unpack('N', $hashpart);
 		$value = $value[1];
 		$value = $value & 0x7FFFFFFF;
-		$modulo = pow(10, static::CODE_LENGTH);
-		return str_pad($value % $modulo, static::CODE_LENGTH, '0', STR_PAD_LEFT);
+		$modulo = pow(10, $digits);
+		return str_pad($value % $modulo, $digits, '0', STR_PAD_LEFT);
 	}
 
 	/**
-	 * validate(String $captcha, String $secret[, Integer $window = 0])
+	 * validate(String $captcha, String $secret[, Integer $window = 1])
 	 * 校验
 	 * ----------------------------------------------------------------
 	 * @param String $captcha 验证码
@@ -152,14 +185,74 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	 * @author Verdient。
 	 */
 	public function validate($captcha, $secret, $window = 1){
-		$time = time();
-		for($i = -$window; $i <= $window; $i++){
-			$timeSlice = $this->getTimeSlice($time, $i);
-			if($this->isEqual($this->calculateCaptcha($secret, $timeSlice), (string) $captcha)){
+		return $this->tValidate($captcha, $secret, $window);
+	}
+
+	/**
+	 * tValidate(String $captcha, String $secret[, Integer $window = 1])
+	 * TOTP校验
+	 * ----------------------------------------------------------------
+	 * @param String $captcha 验证码
+	 * @param String $secret 秘钥
+	 * @param Integer $window 允许偏移的窗口
+	 * -----------------------------------
+	 * @return Boolean
+	 * @author Verdient。
+	 */
+	public function tValidate($captcha, $secret, $window = 1){
+		if($this->validateFormat($captcha)){
+			$captcha = (string) $captcha;
+			$digits = mb_strlen($captcha);
+			if($digits !== 6 && $digits !== 8){
+				return false;
+			}
+			$time = time();
+			for($i = -$window; $i <= $window; $i++){
+				$timeSlice = $this->getTimeSlice($time, $i);
+				if($this->isEqual($this->calculateCaptcha($secret, $timeSlice, $digits), $captcha)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * hValidate(String $captcha, String $secret, Integer $counter)
+	 * HOTP校验
+	 * ------------------------------------------------------------
+	 * @param String $captcha 验证码
+	 * @param String $secret 秘钥
+	 * @param Integer $counter 计数器
+	 * -----------------------------
+	 * @return Boolean
+	 * @author Verdient。
+	 */
+	public function hValidate($captcha, $secret, $counter){
+		if($this->validateFormat($captcha)){
+			$captcha = (string) $captcha;
+			$digits = mb_strlen($captcha);
+			if($digits !== 6 && $digits !== 8){
+				return false;
+			}
+			if($this->isEqual($this->calculateCaptcha($secret, $counter, $digits), $captcha)){
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * validateFormat(String $captcha)
+	 * 校验格式
+	 * -------------------------------
+	 * @param String $captcha 验证码
+	 * ----------------------------
+	 * @return Boolean
+	 * @author Verdient。
+	 */
+	protected function validateFormat($captcha){
+		return (bool) preg_match('/^[1-9][0-9]*$/', $captcha);
 	}
 
 	/**
@@ -197,36 +290,45 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * getUri(String $title, String $name, String $secret)
+	 * getUri(String $title, String $name, String $secret[, Array $options = []])
 	 * 获取URI
-	 * ---------------------------------------------------
-	 * @param String $title 标题
-	 * @param String $name 名称
+	 * --------------------------------------------------------------------------
+	 * @param String $label 标签
 	 * @param String $secret 秘钥
-	 * --------------------------
+	 * @param Array $options 属性
+	 * -------------------------
 	 * @return String
 	 * @author Verdient。
 	 */
-	public function getUri($title, $name, $secret){
-		$uri = 'otpauth://totp/' . $name . '?' . http_build_query([
-			'secret' => $secret,
-			'issuer' => $title
-		]);
+	public function getUri($label, $secret, $options = []){
+		$params = [
+			'secret' => $secret
+		];
+		foreach(['issuer', 'algorithm', 'digits', 'counter', 'period'] as $name){
+			if(isset($options[$name])){
+				$params[$name] = $options[$name];
+			}else{
+				if(property_exists($this, $name) && !empty($this->$name)){
+					$params[$name] = $this->$name;
+				}
+			}
+		}
+		$uri = 'otpauth://' . $this->type . '/' . $label . '?' . http_build_query($params);
 		return $uri;
 	}
 
 	/**
-	 * getQrImageUri(String $title, String $name, String $secret)
+	 * getQrImageUri(String $title, String $name, String $secret[, Array $options = []])
 	 * 获取二维码URI
-	 * ----------------------------------------------------------
-	 * @param String $title 标题
-	 * @param String $name 名称
+	 * ---------------------------------------------------------------------------------
+	 * @param String $label 标签
 	 * @param String $secret 秘钥
-	 * --------------------------
+	 * @param Array $options 属性
+	 * -------------------------
 	 * @return String
 	 * @author Verdient。
 	 */
-	public function getQrImageUri($title, $name, $secret){
-		return $this->getQrImageGenerator()->generateUri($this->getUri($title, $name, $secret));
+	public function getQrImageUri($label, $secret, $options = []){
+		return $this->getQrImageGenerator()->generateUri($this->getUri($label, $secret, $options));
 	}
 }
