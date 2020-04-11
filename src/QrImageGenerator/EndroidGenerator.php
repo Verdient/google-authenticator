@@ -5,36 +5,26 @@ use chorus\ObjectHelper;
 use chorus\UnknownClassException;
 
 /**
- * Endroid
  * Endroid二维码生成器
- * -----------------
  * @author Verdient。
  */
 class EndroidGenerator implements QrImageGeneratorInterface
 {
 	/**
-	 * @var Integer $size
-	 * 二维码尺寸
-	 * ------------------
+	 * @var int 二维码尺寸
 	 * @author Verdient。
 	 */
 	public $size = 200;
 
 	/**
-	 * @var String $format
-	 * 格式
-	 * -------------------
+	 * @var string 图片格式
 	 * @author Verdient。
 	 */
 	public $format = 'png';
 
 	/**
-	 * generateUri(String $data)
 	 * 生成URI
-	 * -------------------------
-	 * @param String $data 数据
-	 * ------------------------
-	 * @return String
+	 * @inheritdoc
 	 * @author Verdient。
 	 */
 	public function generateUri($data){

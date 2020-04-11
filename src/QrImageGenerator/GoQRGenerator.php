@@ -2,44 +2,31 @@
 namespace Verdient\GoogleAuthenticator\QrImageGenerator;
 
 /**
- * GoQRGenerator
  * GoQR二维码生成器
- * --------------
  * @author Verdient。
  */
 class GoQRGenerator implements QrImageGeneratorInterface
 {
 	/**
-	 * @var Integer $size
-	 * 二维码尺寸
-	 * ------------------
+	 * @var int 二维码尺寸
 	 * @author Verdient。
 	 */
 	public $size = 200;
 
 	/**
-	 * @var String $format
-	 * 格式
-	 * -------------------
+	 * @var string 格式
 	 * @author Verdient。
 	 */
 	public $format = 'png';
 
 	/**
-	 * @var String $level
-	 * 等级
-	 * ------------------
+	 * @var string 等级
 	 * @author Verdient。
 	 */
 	public $level = 'H';
 
 	/**
-	 * generateUri(String $data)
-	 * 生成URI
-	 * -------------------------
-	 * @param String $data 数据
-	 * ------------------------
-	 * @return String
+	 * @inheritdoc
 	 * @author Verdient。
 	 */
 	public function generateUri($data){

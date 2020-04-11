@@ -7,75 +7,55 @@ use chorus\ObjectHelper;
 use Verdient\GoogleAuthenticator\QrImageGenerator\QrImageGeneratorInterface;
 
 /**
- * GoogleAuthenticator
  * 谷歌验证器
- * -------------------
  * @author Verdient。
  */
 class GoogleAuthenticator extends \chorus\BaseObject
 {
 	/**
-	 * @var Integer $sercetLength
-	 * 秘钥长度
-	 * --------------------------
+	 * @var int 秘钥长度
 	 * @author Verdient。
 	 */
 	public $sercetLength = 32;
 
 	/**
-	 * @var String $type
-	 * 类型
-	 * -----------------
+	 * @var string 类型
 	 * @author Verdient。
 	 */
 	public $type = 'totp';
 
 	/**
-	 * @var String $issuer
-	 * 发行方
-	 * -------------------
+	 * @var string 发行方
 	 * @author Verdient。
 	 */
 	public $issuer = null;
 
 	/**
-	 * @var String $algorithm
-	 * 算法
-	 * ----------------------
+	 * @var string 算法
 	 * @author Verdient。
 	 */
 	public $algorithm = 'SHA1';
 
 	/**
-	 * @var Integer $digits
-	 * 位数
-	 * --------------------
+	 * @var int 位数
 	 * @author Verdient。
 	 */
 	public $digits = 6;
 
 	/**
-	 * @var Integer $period
-	 * 周期
-	 * --------------------
+	 * @var int 周期
 	 * @author Verdient。
 	 */
 	public $period = 30;
 
 	/**
-	 * @var Mixed $qrImageGenerator
-	 * 二维码生成器
-	 * ----------------------------
+	 * @var mixed 二维码生成器
 	 * @author Verdient。
 	 */
 	public $qrImageGenerator = 'Verdient\GoogleAuthenticator\QrImageGenerator\EndroidGenerator';
 
 	/**
-	 * init()
-	 * 初始化
-	 * ------
 	 * @inheritdoc
-	 * -----------
 	 * @author Verdient。
 	 */
 	public function init(){
@@ -84,9 +64,7 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * getQrImageGenerator()
 	 * 获取二维码生成器
-	 * ---------------------
 	 * @return QrImageGeneratorInterface
 	 * @author Verdient。
 	 */
@@ -98,14 +76,11 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * checkSecretlength(Mixed $value[, Boolean $throwException = true])
 	 * 检查秘钥长度
-	 * -----------------------------------------------------------------
-	 * @param Mixed $value 值
-	 * @param Boolean $throwException 是否抛出异常
-	 * -----------------------------------------
+	 * @param mixed $value 值
+	 * @param bool $throwException 是否抛出异常
 	 * @throws InvalidConfigException
-	 * @return Boolean
+	 * @return bool
 	 * @author Verdient。
 	 */
 	protected function checkSecretlength($value, $throwException = true){
@@ -129,12 +104,9 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * generateSecret([Integer $length = null])
 	 * 生成秘钥
-	 * ----------------------------------------
-	 * @param Integer $length 长度
-	 * --------------------------
-	 * @return String
+	 * @param int $length 长度
+	 * @return string
 	 * @author Verdient。
 	 */
 	public function generateSecret($length = null){
@@ -148,14 +120,11 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * calculateCaptcha(String $secret, Integer $counter[, Integer $digits = null])
 	 * 计算验证码
-	 * ----------------------------------------------------------------------------
-	 * @param String $secret 秘钥
-	 * @param Integer $counter 计数
-	 * @param Integer $digits 位数
-	 * ----------------------------
-	 * @return String
+	 * @param string $secret 秘钥
+	 * @param int $counter 计数
+	 * @param int $digits 位数
+	 * @return string
 	 * @author Verdient。
 	 */
 	public function calculateCaptcha($secret, $counter, $digits = null){
@@ -174,14 +143,11 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * validate(String $captcha, String $secret[, Integer $window = 1])
 	 * 校验
-	 * ----------------------------------------------------------------
-	 * @param String $captcha 验证码
-	 * @param String $secret 秘钥
-	 * @param Integer $window 允许偏移的窗口
-	 * -----------------------------------
-	 * @return Boolean
+	 * @param string $captcha 验证码
+	 * @param string $secret 秘钥
+	 * @param int $window 允许偏移的窗口
+	 * @return bool
 	 * @author Verdient。
 	 */
 	public function validate($captcha, $secret, $window = 1){
@@ -189,14 +155,11 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * tValidate(String $captcha, String $secret[, Integer $window = 1])
 	 * TOTP校验
-	 * ----------------------------------------------------------------
-	 * @param String $captcha 验证码
-	 * @param String $secret 秘钥
-	 * @param Integer $window 允许偏移的窗口
-	 * -----------------------------------
-	 * @return Boolean
+	 * @param string $captcha 验证码
+	 * @param string $secret 秘钥
+	 * @param int $window 允许偏移的窗口
+	 * @return bool
 	 * @author Verdient。
 	 */
 	public function tValidate($captcha, $secret, $window = 1){
@@ -218,14 +181,11 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * hValidate(String $captcha, String $secret, Integer $counter)
 	 * HOTP校验
-	 * ------------------------------------------------------------
-	 * @param String $captcha 验证码
-	 * @param String $secret 秘钥
-	 * @param Integer $counter 计数器
-	 * -----------------------------
-	 * @return Boolean
+	 * @param string $captcha 验证码
+	 * @param string $secret 秘钥
+	 * @param int $counter 计数器
+	 * @return bool
 	 * @author Verdient。
 	 */
 	public function hValidate($captcha, $secret, $counter){
@@ -243,12 +203,9 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * validateFormat(String $captcha)
 	 * 校验格式
-	 * -------------------------------
-	 * @param String $captcha 验证码
-	 * ----------------------------
-	 * @return Boolean
+	 * @param string $captcha 验证码
+	 * @return bool
 	 * @author Verdient。
 	 */
 	protected function validateFormat($captcha){
@@ -256,13 +213,10 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * isEqual(String $string1, String $string2)
 	 * 是否相等
-	 * -----------------------------------------
-	 * @param String $string1 字符串1
-	 * @param String $string2 字符串2
-	 * -----------------------------
-	 * @return Boolean
+	 * @param string $string1 字符串1
+	 * @param string $string2 字符串2
+	 * @return bool
 	 * @author Verdient。
 	 */
 	protected function isEqual($string1, $string2){
@@ -273,13 +227,10 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * getTimeSlice([Integer $time = null, Integer $offset = 0])
 	 * 获取时间分片
-	 * ---------------------------------------------------------
-	 * @param Integer $time 时间戳
-	 * @param Integer $offset 偏移量
-	 * ----------------------------
-	 * @return Integer
+	 * @param int $time 时间戳
+	 * @param int $offset 偏移量
+	 * @return int
 	 * @author Verdient。
 	 */
 	public function getTimeSlice($time = null, $offset = 0){
@@ -290,14 +241,11 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * getUri(String $title, String $name, String $secret[, Array $options = []])
 	 * 获取URI
-	 * --------------------------------------------------------------------------
-	 * @param String $label 标签
-	 * @param String $secret 秘钥
-	 * @param Array $options 属性
-	 * -------------------------
-	 * @return String
+	 * @param string $label 标签
+	 * @param string $secret 秘钥
+	 * @param array $options 属性
+	 * @return string
 	 * @author Verdient。
 	 */
 	public function getUri($label, $secret, $options = []){
@@ -318,14 +266,11 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	}
 
 	/**
-	 * getQrImageUri(String $title, String $name, String $secret[, Array $options = []])
 	 * 获取二维码URI
-	 * ---------------------------------------------------------------------------------
-	 * @param String $label 标签
-	 * @param String $secret 秘钥
-	 * @param Array $options 属性
-	 * -------------------------
-	 * @return String
+	 * @param string $label 标签
+	 * @param string $secret 秘钥
+	 * @param array $options 属性
+	 * @return string
 	 * @author Verdient。
 	 */
 	public function getQrImageUri($label, $secret, $options = []){
