@@ -16,7 +16,7 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	 * @var int 秘钥长度
 	 * @author Verdient。
 	 */
-	public $sercetLength = 32;
+	public $secretLength = 32;
 
 	/**
 	 * @var string 类型
@@ -60,7 +60,7 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	 */
 	public function init(){
 		parent::init();
-		$this->checkSecretlength($this->sercetLength);
+		$this->checkSecretlength($this->secretLength);
 	}
 
 	/**
@@ -111,7 +111,7 @@ class GoogleAuthenticator extends \chorus\BaseObject
 	 */
 	public function generateSecret($length = null){
 		if($length === null){
-			$length = $this->sercetLength;
+			$length = $this->secretLength;
 		}else{
 			$this->checkSecretlength($length);
 		}
