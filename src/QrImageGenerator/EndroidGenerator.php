@@ -32,7 +32,6 @@ class EndroidGenerator implements QrImageGeneratorInterface
 		if(!class_exists($qrCodeClass)){
 			throw new UnknownClassException('Install endroid/qr-code (via composer require endroid/qr-code) to use the qr-code first');
 		}
-		$qrCode = ObjectHelper::create($qrCodeClass);
 		$qrCode = new $qrCodeClass($data);
 		$qrCode->setSize($this->size);
 		$qrCode->setWriterByName($this->format);
