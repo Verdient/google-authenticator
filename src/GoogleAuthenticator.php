@@ -3,6 +3,7 @@ namespace Verdient\GoogleAuthenticator;
 
 use Base32\Base32;
 use chorus\BaseObject;
+use chorus\Configurable;
 use chorus\InvalidConfigException;
 use chorus\ObjectHelper;
 use Verdient\GoogleAuthenticator\QrImageGenerator\QrImageGeneratorInterface;
@@ -13,6 +14,8 @@ use Verdient\GoogleAuthenticator\QrImageGenerator\QrImageGeneratorInterface;
  */
 class GoogleAuthenticator extends BaseObject
 {
+    use Configurable;
+
     /**
      * @var int 秘钥长度
      * @author Verdient。
@@ -59,8 +62,9 @@ class GoogleAuthenticator extends BaseObject
      * @inheritdoc
      * @author Verdient。
      */
-    public function init(){
-        parent::init();
+    public function __construct($config = [])
+    {
+        $this->configuration($config);
         $this->checkSecretlength($this->secretLength);
     }
 
@@ -69,7 +73,8 @@ class GoogleAuthenticator extends BaseObject
      * @return QrImageGeneratorInterface
      * @author Verdient。
      */
-    public function getQrImageGenerator(){
+    public function getQrImageGenerator()
+    {
         if(!is_object($this->qrImageGenerator)){
             $this->qrImageGenerator = ObjectHelper::create($this->qrImageGenerator);
         }
@@ -84,7 +89,8 @@ class GoogleAuthenticator extends BaseObject
      * @return bool
      * @author Verdient。
      */
-    protected function checkSecretlength($value, $throwException = true){
+    protected function checkSecretlength($value, $throwException = true)
+    {
         $result = true;
         if(!is_integer($value)){
             $result = new InvalidConfigException('Secret length must be an integer');
@@ -110,7 +116,8 @@ class GoogleAuthenticator extends BaseObject
      * @return string
      * @author Verdient。
      */
-    public function generateSecret($length = null){
+    public function generateSecret($length = null)
+    {
         if($length === null){
             $length = $this->secretLength;
         }else{
@@ -128,7 +135,8 @@ class GoogleAuthenticator extends BaseObject
      * @return string
      * @author Verdient。
      */
-    public function calculateCaptcha($secret, $counter, $digits = null){
+    public function calculateCaptcha($secret, $counter, $digits = null)
+    {
         if($digits === null){
             $digits = $this->digits;
         }
@@ -151,7 +159,8 @@ class GoogleAuthenticator extends BaseObject
      * @return bool
      * @author Verdient。
      */
-    public function validate($captcha, $secret, $window = 1){
+    public function validate($captcha, $secret, $window = 1)
+    {
         return $this->tValidate($captcha, $secret, $window);
     }
 
@@ -163,7 +172,8 @@ class GoogleAuthenticator extends BaseObject
      * @return bool
      * @author Verdient。
      */
-    public function tValidate($captcha, $secret, $window = 1){
+    public function tValidate($captcha, $secret, $window = 1)
+    {
         if($this->validateFormat($captcha)){
             $captcha = (string) $captcha;
             $digits = mb_strlen($captcha);
@@ -189,7 +199,8 @@ class GoogleAuthenticator extends BaseObject
      * @return bool
      * @author Verdient。
      */
-    public function hValidate($captcha, $secret, $counter){
+    public function hValidate($captcha, $secret, $counter)
+    {
         if($this->validateFormat($captcha)){
             $captcha = (string) $captcha;
             $digits = mb_strlen($captcha);
@@ -209,7 +220,8 @@ class GoogleAuthenticator extends BaseObject
      * @return bool
      * @author Verdient。
      */
-    protected function validateFormat($captcha){
+    protected function validateFormat($captcha)
+    {
         return (bool) preg_match('/^[1-9][0-9]*$/', $captcha);
     }
 
@@ -220,7 +232,8 @@ class GoogleAuthenticator extends BaseObject
      * @return bool
      * @author Verdient。
      */
-    protected function isEqual($string1, $string2){
+    protected function isEqual($string1, $string2)
+    {
         if(function_exists('hash_equals')){
             return hash_equals($string1, $string2);
         }
@@ -234,7 +247,8 @@ class GoogleAuthenticator extends BaseObject
      * @return int
      * @author Verdient。
      */
-    public function getTimeSlice($time = null, $offset = 0){
+    public function getTimeSlice($time = null, $offset = 0)
+    {
         if($time === null){
             $time = time();
         }
@@ -249,7 +263,8 @@ class GoogleAuthenticator extends BaseObject
      * @return string
      * @author Verdient。
      */
-    public function getUri($label, $secret, $options = []){
+    public function getUri($label, $secret, $options = [])
+    {
         $params = [
             'secret' => $secret
         ];
@@ -274,7 +289,8 @@ class GoogleAuthenticator extends BaseObject
      * @return string
      * @author Verdient。
      */
-    public function getQrImageUri($label, $secret, $options = []){
+    public function getQrImageUri($label, $secret, $options = [])
+    {
         return $this->getQrImageGenerator()->generateUri($this->getUri($label, $secret, $options));
     }
 }
