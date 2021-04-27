@@ -7,11 +7,11 @@ namespace Verdient\GoogleAuthenticator\QrImageGenerator;
  */
 interface QrImageGeneratorInterface
 {
-	/**
-	 * 生成URI
-	 * @param string $data 数据
-	 * @return string
-	 * @author Verdient。
-	 */
-	public function generateUri($data);
+    /**
+     * 生成URI
+     * @param string $data 数据
+     * @return string
+     * @author Verdient。
+     */
+    public function generateUri($data);
 }
